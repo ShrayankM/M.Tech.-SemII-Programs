@@ -1,0 +1,9 @@
+Normal text Give a text file as input to the program which contains plaintext.
+Symbols     [!, @, #, $, %, ^, &, *, (), _, -, +, =, {}, "", :;, ., /]
+Numbers     [45, 5, 6, 0012, 90, (67-9-0999, $12,87,990)]
+
+Design and develop your own encryption/decryption algorithm. Give a text file as input to the program which contains plaintext. 
+Your program should write the output (ciphertext) in other file. If out put file is given as input your program should 
+decrypt the message and should give you original plaintext back.
+
+

